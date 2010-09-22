@@ -18,7 +18,7 @@ and may change between versions.
 ### Provided by plproxyrc
 
 #### Configuring plproxyrc
- * `plproxy.set_remote_config_settings(in_is_recursive BOOLEAN, in_does_cache_clusters BOOLEAN, in_parent_cluster TEXT) RETURNS BOOLEAN`
+ * `plproxy.set_remote_config_settings(in_is_recursive BOOLEAN, in_does_cache_clusters BOOLEAN, in_parent_has_plproxyrc BOOLEAN in_parent_cluster TEXT) RETURNS BOOLEAN`
 
 #### Configuring PL/Proxy cluster partitions
  * `plproxy.new_cluster_partitions(in_cluster TEXT, in_cluster_partitions TEXT[], OUT cluster_version INT) RETURNS INT`
