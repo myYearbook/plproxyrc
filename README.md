@@ -10,15 +10,12 @@ API functions
 Any functions not listed here are not considered part of the public API
 and may change between versions.
 
-### Required by PL/Proxy
+### Required by PL/Proxy (and provided by plproxyrc)
  * `plproxy.get_cluster_version(in_cluster_name TEXT) RETURNS INT`
  * `plproxy.get_cluster_partitions(in_cluster_name TEXT) RETURNS SETOF TEXT`
  * `plproxy.get_cluster_config(in_cluster_name TEXT, OUT key TEXT, OUT val TEXT) RETURNS SETOF RECORD`
 
 ### Provided by plproxyrc
-
-#### Configuring plproxyrc
- * `plproxy.set_remote_config_settings(in_is_recursive BOOLEAN, in_does_cache_clusters BOOLEAN, in_parent_has_plproxyrc BOOLEAN in_parent_cluster TEXT) RETURNS BOOLEAN`
 
 #### Configuring PL/Proxy cluster partitions
  * `plproxy.new_cluster_partitions(in_cluster TEXT, in_cluster_partitions TEXT[], OUT cluster_version INT) RETURNS INT`
@@ -33,6 +30,9 @@ and may change between versions.
  * `plproxy.delete_cluster_config_value(in_cluster TEXT, in_param_name TEXT) RETURNS BOOLEAN`
  * `plproxy.delete_cluster_config_values(in_cluster TEXT) RETURNS BOOLEAN`
 
+#### Configuring plproxyrc
+ * `plproxy.set_remote_config_settings(in_is_recursive BOOLEAN, in_does_cache_clusters BOOLEAN, in_parent_has_plproxyrc BOOLEAN, in_parent_cluster TEXT) RETURNS BOOLEAN`
+
 Requirements
 ============
  * [PL/Proxy](http://pgfoundry.org/projects/plproxy/)
@@ -40,15 +40,11 @@ Requirements
  * Tested with Postgres 8.4.4
  * For testing, Ruby and Rake
 
-Installation
-============
-In the target database,
- 1. Install PL/Proxy.
- 2. Install PL/pgSQL.
- 2. Load plproxyrc.sql into target database.
-
-Getting Started
+Getting started
 ===============
+Load plproxyrc.sql into target database:
+    psql --dbname target --file plproxyrc.sql
+
 Ownership of the objects is assigned to the user loading the script.
 Only this user or a superuser may use the objects.
 
