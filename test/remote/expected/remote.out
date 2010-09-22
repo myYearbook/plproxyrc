@@ -1,0 +1,1726 @@
+psql:../../plproxyrc.sql:19: NOTICE:  ALTER TABLE / ADD PRIMARY KEY will create implicit index "clusters_pkey" for table "clusters"
+psql:../../plproxyrc.sql:190: NOTICE:  ALTER TABLE / ADD UNIQUE will create implicit index "cluster_partitions_cluster_key" for table "cluster_partitions"
+ new_remote_config_version 
+---------------------------
+ t
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+   get_cluster_partitions   
+----------------------------
+ dbname=plproxyrc_authority
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+   get_cluster_partitions    
+-----------------------------
+ dbname=plproxyrc_caching_rc
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+   get_cluster_partitions   
+----------------------------
+ dbname=plproxyrc_authority
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+     get_cluster_partitions      
+---------------------------------
+ dbname=plproxyrc_non_caching_rc
+(1 row)
+
+ set_cluster_config_default_value 
+----------------------------------
+ t
+(1 row)
+
+ set_cluster_config_default_value 
+----------------------------------
+ t
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_cluster_config_value 
+--------------------------
+ t
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+  get_cluster_partitions  
+--------------------------
+ dbname=plproxy_authority
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+  get_cluster_partitions  
+--------------------------
+ dbname=plproxyrc_caching
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+  get_cluster_partitions  
+--------------------------
+ dbname=plproxy_authority
+(1 row)
+
+ new_cluster_partitions 
+------------------------
+                      1
+(1 row)
+
+ set_remote_config 
+-------------------
+ t
+(1 row)
+
+    get_cluster_partitions    
+------------------------------
+ dbname=plproxyrc_non_caching
+(1 row)
+
+get_settings: plproxyrc_caching
+ is_recursive | does_cache_clusters | parent_has_plproxyrc |  parent_cluster   
+--------------+---------------------+----------------------+-------------------
+ t            | t                   | t                    | plproxy_authority
+(1 row)
+
+get_settings: plproxyrc_caching_leaf
+ is_recursive | does_cache_clusters | parent_has_plproxyrc |  parent_cluster   
+--------------+---------------------+----------------------+-------------------
+ t            | t                   | t                    | plproxyrc_caching
+(1 row)
+
+get_settings: plproxyrc_non_caching
+ is_recursive | does_cache_clusters | parent_has_plproxyrc |  parent_cluster   
+--------------+---------------------+----------------------+-------------------
+ t            | f                   | f                    | plproxy_authority
+(1 row)
+
+get_settings: plproxyrc_non_caching_leaf
+ is_recursive | does_cache_clusters | parent_has_plproxyrc |    parent_cluster     
+--------------+---------------------+----------------------+-----------------------
+ t            | t                   | f                    | plproxyrc_non_caching
+(1 row)
+
+test_clusters: plproxyrc_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_rc
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf_rc
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_rc
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf_rc
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+NOTICE:  plproxy.parent_cluster_configuration(2): [plproxyrc_non_caching_rc] REMOTE NOTICE: Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  Remote context: PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+PL/pgSQL function "cluster_configuration" line 5 at assignment
+PL/pgSQL function "remote_cluster_configuration" line 35 at assignment
+PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+NOTICE:  plproxy.parent_cluster_configuration(2): [plproxyrc_non_caching_rc] REMOTE NOTICE: Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  Remote context: PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+SQL statement "SELECT  ARRAY(SELECT part FROM plproxy.get_cluster_partitions( $1 ) AS c (part))"
+PL/pgSQL function "cluster_configuration" line 6 at assignment
+PL/pgSQL function "remote_cluster_configuration" line 35 at assignment
+PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+NOTICE:  plproxy.parent_cluster_configuration(2): [plproxyrc_non_caching_rc] REMOTE NOTICE: Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  Remote context: PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+PL/pgSQL function "cluster_configuration" line 11 at FOR over SELECT rows
+PL/pgSQL function "remote_cluster_configuration" line 35 at assignment
+PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+NOTICE:  plproxy.parent_cluster_configuration(2): [plproxyrc_non_caching_rc] REMOTE NOTICE: Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  Remote context: PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+PL/pgSQL function "cluster_configuration" line 5 at assignment
+PL/pgSQL function "remote_cluster_configuration" line 35 at assignment
+PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+NOTICE:  plproxy.parent_cluster_configuration(2): [plproxyrc_non_caching_rc] REMOTE NOTICE: Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  Remote context: PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+SQL statement "SELECT  ARRAY(SELECT part FROM plproxy.get_cluster_partitions( $1 ) AS c (part))"
+PL/pgSQL function "cluster_configuration" line 6 at assignment
+PL/pgSQL function "remote_cluster_configuration" line 35 at assignment
+PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+NOTICE:  plproxy.parent_cluster_configuration(2): [plproxyrc_non_caching_rc] REMOTE NOTICE: Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  Remote context: PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+PL/pgSQL function "cluster_configuration" line 11 at FOR over SELECT rows
+PL/pgSQL function "remote_cluster_configuration" line 35 at assignment
+PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_caching_leaf
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_non_caching_leaf
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_caching_leaf_rc
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_non_caching_leaf_rc
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_rc
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_rc
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_caching_leaf
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_non_caching_leaf
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_caching_leaf_rc
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+plproxyrc_non_caching_leaf_rc
+new-cluster
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+new-cluster-2
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_caching_leaf_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_rc
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_version" line 23 at assignment
+SQL function "get_cluster_version" statement 1
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_partitions" line 28 at assignment
+SQL function "get_cluster_partitions" statement 1
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+NOTICE:  Performing remote lookup for cluster 'new-cluster-2'
+CONTEXT:  PL/pgSQL function "cluster_config" line 33 at assignment
+SQL function "get_cluster_config" statement 1
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
+test_clusters: plproxyrc_non_caching_leaf_rc
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+ get_cluster_partitions  
+-------------------------
+ new-cluster-partition-1
+ new-cluster-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ connection_lifetime | 30
+ query_timeout       | 30
+(2 rows)
+
+ get_cluster_version 
+---------------------
+                   1
+(1 row)
+
+  get_cluster_partitions   
+---------------------------
+ new-cluster-2-partition-1
+ new-cluster-2-partition-2
+(2 rows)
+
+         key         | val 
+---------------------+-----
+ query_timeout       | 60
+ connection_lifetime | 30
+(2 rows)
+
