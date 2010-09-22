@@ -1147,7 +1147,7 @@ BEGIN
 END;
 $body$;
 
-SELECT plproxy.new_remote_config_version(0, 9, 0, '');
+SELECT plproxy.new_remote_config_version(0, 10, 0, 'DEV');
 
 CREATE FUNCTION plproxy.get_cluster_version(in_cluster text)
 RETURNS integer
