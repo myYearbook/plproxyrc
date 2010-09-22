@@ -33,11 +33,6 @@ and may change between versions.
  * `plproxy.delete_cluster_config_value(in_cluster TEXT, in_param_name TEXT) RETURNS BOOLEAN`
  * `plproxy.delete_cluster_config_values(in_cluster TEXT) RETURNS BOOLEAN`
 
-Tables
-------
- * plproxy.clusters
- * plproxy.cluster_partitions
-
 Requirements
 ============
  * [PL/Proxy](http://pgfoundry.org/projects/plproxy/)
