@@ -89,7 +89,6 @@ To run the functional tests:
 
 TODO
 ====
- * Ensure parent_cluster is not a cached cluster.
  * Streamline remote PL/Proxy tests -- should be shorter
  * Confirm code coverage of unit and remote tests
  * Simplify directory layout

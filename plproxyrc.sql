@@ -9,7 +9,8 @@ CREATE TABLE plproxy.clusters
 (
   cluster TEXT NOT NULL,
   version INTEGER NOT NULL DEFAULT 0,
-  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+    DEFAULT CURRENT_TIMESTAMP,
   is_cached BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -17,6 +18,12 @@ COMMENT ON TABLE plproxy.clusters IS 'Available clusters.';
 
 ALTER TABLE ONLY plproxy.clusters
   ADD CONSTRAINT clusters_pkey PRIMARY KEY (cluster);
+
+CREATE UNIQUE INDEX clusters_is_cached_cluster_key
+  ON plproxy.clusters (is_cached, cluster);
+COMMENT ON INDEX plproxy.clusters_is_cached_cluster_key IS
+'Over-constrained index to allow foreign key reference from '
+'plproxy.remote_cluster_settings';
 
 CREATE FUNCTION plproxy.clusters_update_updated_at()
 RETURNS trigger
@@ -436,8 +443,11 @@ CREATE TABLE plproxy.remote_config_settings
   is_recursive BOOLEAN NOT NULL DEFAULT FALSE,
   does_cache_clusters BOOLEAN NOT NULL DEFAULT TRUE,
   parent_has_plproxyrc BOOLEAN NOT NULL DEFAULT FALSE,
-  parent_cluster TEXT NOT NULL
-    REFERENCES plproxy.clusters (cluster)
+  is_cached BOOLEAN NOT NULL DEFAULT FALSE CHECK (NOT is_cached),
+  parent_cluster TEXT NOT NULL,
+  CONSTRAINT remote_config_settings_is_cached_parent_cluster_fkey
+    FOREIGN KEY (is_cached, parent_cluster)
+      REFERENCES plproxy.clusters (is_cached, cluster)
 );
 
 COMMENT ON TABLE plproxy.remote_config_settings IS
