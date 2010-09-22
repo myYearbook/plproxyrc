@@ -95,6 +95,9 @@ TODO
  * Confirm code coverage of unit and remote tests
  * Simplify directory layout
  * Make PGXS-compatible? (install in share/contrib?)
+ * Include documentation for all functions in function bodies.
+ * Include documentation for functions in README or elsewhere,
+   preferably generated from the function documenation itself.
 
 
 
