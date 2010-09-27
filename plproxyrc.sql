@@ -2,6 +2,7 @@ BEGIN;
 
 CREATE SCHEMA plproxy;
 GRANT USAGE ON SCHEMA plproxy TO public;
+COMMENT ON SCHEMA plproxy IS 'PL/Proxy API and configuration data.';
 
 SET search_path = plproxy, pg_catalog;
 
@@ -14,7 +15,7 @@ CREATE TABLE plproxy.clusters
   is_cached BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-COMMENT ON TABLE plproxy.clusters IS 'Available clusters.';
+COMMENT ON TABLE plproxy.clusters IS 'Available PL/Proxy clusters.';
 
 ALTER TABLE ONLY plproxy.clusters
   ADD CONSTRAINT clusters_pkey PRIMARY KEY (cluster);
@@ -158,9 +159,6 @@ BEGIN
 END;
 $_$;
 
-COMMENT ON FUNCTION delete_cluster(in_cluster text) IS
-'Deletes the given cluster (and all of its associated partitions)';
-
 CREATE FUNCTION
 plproxy.delete_cached_clusters()
 RETURNS BOOLEAN
@@ -242,34 +240,6 @@ STRICT LANGUAGE sql AS $body$
     FROM plproxy.cluster_config_params p;
 $body$;
 
-CREATE FUNCTION
-plproxy.set_cluster_config_default_value(in_param_name TEXT,
-                                         in_param_default_value TEXT)
-RETURNS BOOLEAN
-LANGUAGE PLPGSQL AS $body$
-/**
- *
- * Sets the given config parameter to the given value for the given
- * cluster.
- *
- * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
- * @since      2010-09-20
- *
- * @param[IN]   in_param_name
- * @param[IN]   in_param_default_value
- * @return      TRUE if the set modified the value for the parameter
- *              and FALSE otherwise.
- *
- */
-BEGIN
-  UPDATE plproxy.cluster_config_params
-    SET param_default_value = in_param_default_value
-    WHERE param_name = in_param_name
-          AND param_default_value IS DISTINCT FROM in_param_default_value;
-  RETURN FOUND;
-END;
-$body$;
-
 CREATE TABLE plproxy.cluster_config_param_values
 (
   "cluster" text not null
@@ -280,6 +250,48 @@ CREATE TABLE plproxy.cluster_config_param_values
 );
 
 CREATE UNIQUE INDEX cluster_config_param_values_cluster_param_name_key ON plproxy.cluster_config_param_values (cluster, param_name);
+
+CREATE FUNCTION
+plproxy.set_cluster_config_default_value(in_param_name TEXT,
+                                         in_param_default_value TEXT)
+RETURNS BOOLEAN
+LANGUAGE PLPGSQL AS $body$
+/**
+ *
+ * Sets the given config parameter to the given value for the given
+ * cluster.
+ * Increments version for clusters which have no per-cluster value
+ * set for the given param.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-20
+ *
+ * @param[IN]   in_param_name
+ * @param[IN]   in_param_default_value
+ * @return      TRUE if the set modified the value for the parameter
+ *              and FALSE otherwise.
+ *
+ */
+DECLARE
+  v_did_update BOOLEAN DEFAULT FALSE;
+BEGIN
+  UPDATE plproxy.cluster_config_params
+    SET param_default_value = in_param_default_value
+    WHERE param_name = in_param_name
+          AND param_default_value IS DISTINCT FROM in_param_default_value;
+  v_did_update := FOUND;
+  IF v_did_update THEN
+    PERFORM TRUE FROM plproxy.increment_cluster_versions(
+      ARRAY(SELECT c.cluster
+              FROM plproxy.clusters c
+            EXCEPT
+            SELECT pv.cluster
+              FROM plproxy.cluster_config_param_values pv
+              WHERE pv.param_name = in_param_name));
+  END IF;
+  RETURN v_did_update;
+END;
+$body$;
 
 CREATE FUNCTION
 plproxy.cluster_config(in_cluster TEXT, OUT param_name TEXT, OUT param_value TEXT)
@@ -385,6 +397,9 @@ BEGIN
         v_did_loop := TRUE;
     END;
   END LOOP;
+  IF v_did_modify THEN
+    PERFORM plproxy.increment_cluster_version(in_cluster);
+  END IF;
   RETURN v_did_modify;
 END;
 $body$;
@@ -406,9 +421,15 @@ STRICT LANGUAGE PLPGSQL AS $body$
  * @return      TRUE if a row existed (and was deleted) and FALSE otherwise.
  *
  */
+DECLARE
+  v_did_delete BOOLEAN DEFAULT FALSE;
 BEGIN
   DELETE FROM plproxy.cluster_config_param_values
     WHERE (cluster, param_name) = (in_cluster, in_param_name);
+  v_did_delete := FOUND;
+  IF v_did_delete THEN
+    PERFORM plproxy.increment_cluster_version(in_cluster);
+  END IF;
   RETURN FOUND;
 END;
 $body$;
@@ -544,9 +565,6 @@ BEGIN
 END;
 $$;
 
-COMMENT ON FUNCTION cluster_partitions(in_cluster text, OUT partition text) IS
-'Returns the partitions associated with the given cluster.';
-
 CREATE FUNCTION
 plproxy.cluster_version(in_cluster text, OUT version integer)
 RETURNS INTEGER
@@ -581,8 +599,67 @@ BEGIN
 END;
 $_$;
 
-COMMENT ON FUNCTION cluster_version(in_cluster text, OUT version integer) IS
-'Returns the version of the available cluster.';
+CREATE FUNCTION
+plproxy.increment_cluster_versions(in_clusters TEXT[], OUT cluster TEXT, OUT cluster_version INT)
+RETURNS SETOF RECORD
+STRICT LANGUAGE PLPGSQL AS $body$
+/**
+ *
+ * Increments the version of each of the given clusters by 1,
+ * returning the clusters and new version numbers for each
+ * cluster updated.
+ * Unknown clusters are ignored. Duplicated cluster names are ignored: each
+ * existing cluster version is incremented only once.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @private
+ *
+ * @param[IN]
+ * @param[OUT]
+ * @return
+ *
+ */
+BEGIN
+  FOR cluster, cluster_version IN
+    UPDATE plproxy.clusters
+      SET version = version + 1
+      WHERE clusters.cluster = ANY (in_clusters)
+    RETURNING clusters.cluster, clusters.version
+  LOOP
+    RETURN NEXT;
+  END LOOP;
+  RETURN;
+END;
+$body$;
+
+CREATE FUNCTION
+plproxy.increment_cluster_version(in_cluster TEXT, OUT cluster_version INT)
+RETURNS INT
+STRICT LANGUAGE PLPGSQL AS $body$
+/**
+ *
+ * Increments the version for the given cluster by 1, returning the new
+ * version. Unknown clusters are ignored.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @private
+ *
+ * @param[IN]   in_cluster
+ * @param[OUT]  cluster_version
+ * @return
+ *
+ */
+BEGIN
+  SELECT INTO cluster_version
+         icv.cluster_version
+    FROM plproxy.increment_cluster_versions(ARRAY[in_cluster]) icv;
+  RETURN;
+END;
+$body$;
 
 CREATE FUNCTION
 plproxy.partition_count_check(in_partitions text[],
@@ -677,8 +754,9 @@ DECLARE
   v_did_cache BOOLEAN DEFAULT FALSE;
 BEGIN
   IF array_upper(in_config, 2) <> 2 THEN
-    RAISE EXCEPTION 'Malformed in_config value %. Expect array of two-element arrays',
-          quote_literal(in_config);
+    RAISE EXCEPTION
+      'Malformed in_config value %. Expect array of two-element arrays',
+       quote_literal(in_config);
   END IF;
 
   BEGIN
@@ -777,6 +855,27 @@ plproxy.cluster_configuration(in_cluster TEXT,
 RETURNS RECORD
 STABLE
 STRICT LANGUAGE PLPGSQL AS $body$
+/**
+ *
+ * Returns the complete cluster configuration for the given cluster,
+ * including remote_config_version_string, cluster version, an array
+ * of the cluster partitions, and an array of the cluster configuration.
+ * Used by plproxyrc to fetch all pertinent cluster configuration in a
+ * single query.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @private
+ *
+ * @param[IN]   in_cluster
+ * @param[OUT]  remote_config_version_string
+ * @param[OUT]  version
+ * @param[OUT]  partitions
+ * @param[OUT]  config
+ * @return
+ *
+ */
 DECLARE
   v_config TEXT[];
 BEGIN
@@ -807,6 +906,25 @@ plproxy.parent_cluster_configuration(in_parent_cluster text,
                                      OUT config TEXT[])
 RETURNS RECORD
 STRICT LANGUAGE PLPROXY AS $body$
+/**
+ *
+ * Returns the complete cluster configuration from plproxyrc parent cluster
+ * for the given cluster.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @private
+ *
+ * @param[IN]   in_parent_cluster             plrpoxyrc parent cluster
+ * @param[IN]   in_cluster                    cluster to look up
+ * @param[OUT]  remote_config_version_string  plproxyrc version string
+ * @param[OUT]  version                       cluster version
+ * @param[OUT]  partitions                    cluster partitions
+ * @param[OUT]  config                        cluster config
+ * @return
+ *
+ */
   CLUSTER CAST(in_parent_cluster AS TEXT);
   RUN ON ANY;
   SELECT pc.remote_config_version_string,
@@ -821,6 +939,23 @@ CREATE FUNCTION
 plproxy.parent_cluster_version(in_parent_cluster TEXT, in_cluster TEXT)
 RETURNS INT
 STRICT LANGUAGE PLPROXY AS $body$
+/**
+ *
+ * Returns the cluster version for the given cluster from the plproxyrc
+ * parent cluster.
+ * Used by plproxyrc to fetch cluster configuration on parents which
+ * do not have plproxyrc installed.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @private
+ *
+ * @param[IN]   in_parent_cluster
+ * @param[IN]   in_cluster
+ * @return
+ *
+ */
   CLUSTER CAST(in_parent_cluster AS TEXT);
   RUN ON ANY;
   SELECT plproxy.get_cluster_version(in_cluster);
@@ -831,6 +966,25 @@ plproxy.parent_cluster_config(in_parent_cluster TEXT, in_cluster TEXT,
                               OUT param_name TEXT, OUT param_value TEXT)
 RETURNS SETOF RECORD
 STRICT LANGUAGE PLPROXY AS $body$
+/**
+ *
+ * Returns the cluster config for the given cluster from the plproxyrc
+ * parent cluster.
+ * Used by plproxyrc to fetch cluster configuration on parents which
+ * do not have plproxyrc installed.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @private
+ *
+ * @param[IN]   in_parent_cluster
+ * @param[OUT]  in_cluster
+ * @param[OUT]  param_name
+ * @param[OUT]  param_value
+ * @return
+ *
+ */
   CLUSTER CAST(in_parent_cluster AS TEXT);
   RUN ON ANY;
   SELECT c.param_name, c.param_value
@@ -842,6 +996,24 @@ plproxy.parent_cluster_partitions(in_parent_cluster TEXT, in_cluster TEXT,
                                   OUT partition TEXT)
 RETURNS SETOF TEXT
 STRICT LANGUAGE PLPROXY AS $body$
+/**
+ *
+ * Returns the cluster partitions for the given cluster from the plproxyrc
+ * parent cluster.
+ * Used by plproxyrc to fetch cluster configuration on parents which
+ * do not have plproxyrc installed.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @private
+ *
+ * @param[IN]   in_parent_cluster
+ * @param[OUT]  in_cluster
+ * @param[OUT]  partition
+ * @return
+ *
+ */
   CLUSTER CAST(in_parent_cluster AS TEXT);
   RUN ON ANY;
   SELECT c.partition
@@ -968,18 +1140,26 @@ plproxy.new_cluster_partitions(in_cluster text, in_partitions text[],
 RETURNS INTEGER
 STRICT
 LANGUAGE PLPGSQL AS $$
+/**
+ *
+ * Create a new cluster and partitions. Raises an exception if the
+ * given cluster already exists.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @param[IN]   in_cluster
+ * @param[IN]   in_partitions
+ * @param[OUT]  cluster_version
+ * @return
+ *
+ */
 BEGIN
   PERFORM plproxy.new_cluster(in_cluster);
   cluster_version := plproxy.set_cluster_partitions(in_cluster, in_partitions);
   RETURN;
 END
 $$;
-
-COMMENT ON FUNCTION
-plproxy.new_cluster_partitions(in_cluster text, in_partitions text[],
-                               OUT cluster_version integer) IS
-'Creates a new cluster with partitions for the new cluster '
-'in the order the partitions are listed.';
 
 CREATE FUNCTION
 plproxy.set_cluster_partitions(in_cluster text,
@@ -991,8 +1171,7 @@ LANGUAGE PLPGSQL AS $_$
 /**
  *
  * Sets the partitions for the given cluster and bumps the cluster
- * version. The given cluster must already exist or an exception will
- * be raised.
+ * version. An exception is raised if the cluster does not already exist.
  *
  * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
  * @since      2010-09-20
@@ -1007,20 +1186,10 @@ BEGIN
   DELETE FROM plproxy.cluster_partitions cp
     WHERE cp.cluster = in_cluster;
   PERFORM plproxy.new_trapped_cluster_partitions(in_cluster, in_partitions);
-  UPDATE plproxy.clusters c
-    SET version = version + 1
-    WHERE c.cluster = in_cluster
-    RETURNING c.version INTO cluster_version;
+  cluster_version := plproxy.increment_cluster_version(in_cluster);
   RETURN;
 END
 $_$;
-
-COMMENT ON FUNCTION
-plproxy.set_cluster_partitions(in_cluster text,
-                               in_partitions text[],
-                               OUT cluster_version integer) IS
-'Sets the partitions for the given cluster '
-'in the order the partitions are listed.';
 
 CREATE FUNCTION
 plproxy.set_remote_config(in_is_recursive BOOLEAN,
@@ -1163,6 +1332,18 @@ CREATE FUNCTION plproxy.get_cluster_version(in_cluster text)
 RETURNS integer
 STABLE
 LANGUAGE sql AS $_$
+/**
+ *
+ * Returns the cluster version for the given cluster.
+ * Required by the PL/Proxy API.
+ * Raises an exception if the given cluster does not exist.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @param[IN]   in_cluster
+ *
+ */
   SELECT plproxy.cluster_version($1);
 $_$;
 
@@ -1170,6 +1351,21 @@ CREATE FUNCTION
 plproxy.get_cluster_config(in_cluster text, OUT key text, OUT val text)
 RETURNS SETOF record
 LANGUAGE SQL AS $$
+/**
+ *
+ * Returns the config for the given cluster.
+ * Required by the PL/Proxy API.
+ * Raises an exception if the given cluster does not exist.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @param[IN]   in_cluster
+ * @param[OUT]  key
+ * @param[OUT]  val
+ * @return
+ *
+ */
   SELECT cc.param_name, cc.param_value
     FROM plproxy.cluster_config($1) AS cc;
 $$;
@@ -1178,7 +1374,19 @@ CREATE FUNCTION plproxy.get_cluster_partitions(in_cluster text)
 RETURNS SETOF text
 STRICT
 LANGUAGE SQL AS $_$
-  SELECT partition
+/**
+ *
+ * Returns the partitions for the given cluster.
+ * Required by the PL/Proxy API.
+ * Raises an exception if the given cluster does not exist.
+ *
+ * @author     Michael Glaesemann <michael.glaesemann@myyearbook.com>
+ * @since      2010-09-27
+ *
+ * @param[IN]   in_cluster
+ *
+ */
+  SELECT cvp.partition
     FROM plproxy.cluster_partitions($1) AS cvp;
 $_$;
 
