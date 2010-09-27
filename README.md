@@ -1,9 +1,25 @@
 plproxyrc - PL/Proxy Remote Config
 ===================================
- * table-based PL/Proxy cluster configuration
- * convenience functions for setting cluster partitions
- * remote lookup of cluster configuration
- * local caching of remote cluster configuration
+High-level overview:
+ * Function API for table-based PL/Proxy cluster configuration
+ * Remote lookup of cluster configuration (via PL/Proxy)
+ * Local caching of remote cluster configuration
+
+PL/Proxy provides a very nice method of performing queries on remote Postgres
+servers. It has a very simple interface: implement three functions: for PL/Proxy
+to provide:
+1. `plproxy.get_cluster_partitions` provides named collections of connections
+   (*cluster* being the name, *partitions* being the connection collection)
+2. `plproxy.get_cluster_config` provides per-cluster connection configuration
+3. `plproxy.get_cluster_version` provides a simple method of allowing PL/Proxy
+   flush its cached connections if the version changes.
+
+plproxyrc provides a set of functions for managing cluster configuration.
+
+(The configuration itself is stored in Postgres tables in the plproxy schema,
+but you should never need to access the tables directly: the function API
+should provide everything you need for managing PL/Proxy clusters. If there's
+something missing, drop me a line.)
 
 API functions
 -------------
@@ -11,6 +27,8 @@ Any functions not listed here are not considered part of the public API
 and may change between versions.
 
 ### Required by PL/Proxy (and provided by plproxyrc)
+plproxyrc provides the three functions used by the PL/Proxy library.
+
  * `plproxy.get_cluster_version(in_cluster_name TEXT) RETURNS INT`
  * `plproxy.get_cluster_partitions(in_cluster_name TEXT) RETURNS SETOF TEXT`
  * `plproxy.get_cluster_config(in_cluster_name TEXT, OUT key TEXT, OUT val TEXT) RETURNS SETOF RECORD`
@@ -38,7 +56,6 @@ Requirements
  * [PL/Proxy](http://pgfoundry.org/projects/plproxy/)
  * PL/pgSQL
  * Tested with Postgres 8.4.4
- * For testing, Ruby and Rake
 
 Getting started
 ===============
@@ -56,6 +73,8 @@ infinite loop. Caveat configurator.
 
 Testing
 =======
+ Ruby and Rake are required for testing.
+
 There are two sets of tests:
  * [pgTAP][] unit tests for non-PL/Proxy functions such as configuration management
  * remote functional PL/Proxy tests for PL/Proxy functions
@@ -96,8 +115,12 @@ TODO
  * Include documentation for all functions in function bodies.
  * Include documentation for functions in README or elsewhere,
    preferably generated from the function documenation itself.
+ * Bump cluster version number when cluster config is updated.
+   (Currently only updates when cluster partitions are set.)
 
-
+Author
+------
+Michael Glaesemann <michael.glaesemann at myyearbook.com>
 
 Copyright and License
 =====================
