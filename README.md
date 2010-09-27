@@ -7,15 +7,17 @@ High-level overview:
  * Local caching of remote cluster configuration
 
 PL/Proxy provides a very nice method of performing queries on remote Postgres
-servers. It has a very simple interface: implement three functions: for PL/Proxy
-to provide:
+servers. It has a very simple interface.
+
+It implement three functions required for PL/Proxy:
+
  1. `plproxy.get_cluster_partitions` provides named collections of connections
    (*cluster* being the name, *partitions* being the connection collection)
  2. `plproxy.get_cluster_config` provides per-cluster connection configuration
  3. `plproxy.get_cluster_version` provides a simple method of allowing PL/Proxy
    flush its cached connections if the version changes.
 
-plproxyrc provides a set of functions for managing cluster configuration.
+plproxyrc also provides a set of functions for managing cluster configuration.
 
 (The configuration itself is stored in Postgres tables in the plproxy schema,
 but you should never need to access the tables directly: the function API
