@@ -79,12 +79,14 @@ Testing
  Ruby and Rake are required for testing.
 
 There are two sets of tests:
+
  * [pgTAP][] unit tests for non-PL/Proxy functions such as configuration management
  * remote functional PL/Proxy tests for PL/Proxy functions
 
 pgTAP unit tests
 ----------------
 The pgTAP tests
+
  * create a new database
  * load pgTAP, plproxyrc, and plproxyrc unit test SQL files
  * run the unit tests, and
@@ -100,6 +102,7 @@ The pgTAP library included with plproxyrc requires Postgres 8.4
 PL/Proxy functional tests
 -------------------------
 The functional tests
+
  * create new databases
  * load PL/Proxy and plproxyrc as appropriate
  * run PL/Proxy functions requiring lookups
@@ -118,12 +121,12 @@ TODO
  * Include documentation for all functions in function bodies.
  * Include documentation for functions in README or elsewhere,
    preferably generated from the function documenation itself.
- * Bump cluster version number when cluster config is updated.
-   (Currently only updates when cluster partitions are set.)
+ * Confirm which permissions are necessary for default install
+   (particularly tables)
 
 Author
 ------
-Michael Glaesemann <michael.glaesemann at myyearbook.com>
+Michael Glaesemann michael.glaesemann at myyearbook.com
 
 Copyright and License
 =====================
